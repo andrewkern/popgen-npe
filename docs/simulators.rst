@@ -13,7 +13,7 @@ Simulators in popgen-npe are responsible for:
 - Simulating both ancestry and mutations
 - Ensuring consistent random seeding for reproducibility
 
-All simulators inherit from ``BaseSimulator`` and follow a consistent interface, making them interchangeable within the workflow.
+All simulators inherit from ``BaseSimulator`` and follow a consistent interface, making them interchangeable within the workflow. Unless otherwise noted, each parameter listed below is sampled uniformly over the given bounds and stored exactly as drawn in the ``targets`` array. Models that work in log10 space (e.g., the variable population-size simulators) return log10-transformed population sizes so downstream analyses must exponentiate them when real sizes are required.
 
 Base Simulator
 --------------
@@ -76,11 +76,10 @@ YRI_CEU
 
       simulator:
         class_name: YRI_CEU
-        parameters:
-          samples:
-            YRI: 20
-            CEU: 20
-          sequence_length: 5e6
+        sequence_length: 5e6
+        samples:
+          YRI: 20
+          CEU: 20
 
 DroMel_CO_FR
 ~~~~~~~~~~~~~
@@ -125,11 +124,10 @@ DroMel_CO_FR
 
       simulator:
         class_name: DroMel_CO_FR
-        parameters:
-          samples:
-            CO: 20
-            FR: 20
-          sequence_length: 2e6
+        sequence_length: 2e6
+        samples:
+          CO: 20
+          FR: 20
 
 AraTha_2epoch
 ~~~~~~~~~~~~~
@@ -166,10 +164,9 @@ AraTha_2epoch
 
       simulator:
         class_name: AraTha_2epoch
-        parameters:
-          samples:
-            SouthMiddleAtlas: 15
-          sequence_length: 1e7
+        sequence_length: 1e7
+        samples:
+          SouthMiddleAtlas: 15
 
 VariablePopulationSize
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -198,9 +195,11 @@ VariablePopulationSize
    - ``time_rate``: 0.1
 
    **Inferred Parameters (uniform priors):**
-
-   - ``N_0, N_1, ..., N_{n-1}``: [1e2, 1e5] - Population sizes (log10 space)
+   
+   - ``N_0, N_1, ..., N_{n-1}``: log10 population sizes sampled between ``log10(pop_sizes[0])`` and ``log10(pop_sizes[1])`` (defaults: 2–5, corresponding to 1e2–1e5)
    - ``recomb_rate``: [1e-9, 2e-8] - Recombination rate
+
+   The parameter vector returned by this simulator stores log10 population sizes; exponentiate to obtain sizes in diploid individuals.
 
    **Example Configuration:**
 
@@ -208,10 +207,9 @@ VariablePopulationSize
 
       simulator:
         class_name: VariablePopulationSize
-        parameters:
-          num_time_windows: 5
-          pop_sizes: [1e3, 1e6]
-          max_time: 50000
+        num_time_windows: 5
+        pop_sizes: [1e3, 1e6]
+        max_time: 50000
 
 DependentVariablePopulationSize
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -246,8 +244,10 @@ DependentVariablePopulationSize
 
    **Inferred Parameters:**
 
-   - ``N_0, N_1, ..., N_{n-1}``: [1e2, 1e5] - Population sizes (log10 space, correlated)
+   - ``N_0, N_1, ..., N_{n-1}``: log10 population sizes (defaults span log10(1e2)–log10(1e5)); correlations are induced via ``pop_changes`` increments sampled uniformly in log10 space
    - ``recomb_rate``: [1e-9, 1e-8] - Recombination rate
+
+   The simulator returns log10-transformed population sizes; exponentiate them (base 10) to recover effective population sizes in standard units.
 
    **Example Configuration:**
 
@@ -255,11 +255,10 @@ DependentVariablePopulationSize
 
       simulator:
         class_name: DependentVariablePopulationSize
-        parameters:
-          num_time_windows: 21
-          pop_sizes: [1e2, 1e5]
-          pop_changes: [-0.5, 0.5]
-          max_time: 100000
+        num_time_windows: 21
+        pop_sizes: [1e2, 1e5]
+        pop_changes: [-0.5, 0.5]
+        max_time: 100000
 
 recombination_rate
 ~~~~~~~~~~~~~~~~~~
@@ -292,26 +291,24 @@ recombination_rate
 
       simulator:
         class_name: recombination_rate
-        parameters:
-          pop_size: 5e4
-          sequence_length: 5e6
+        pop_size: 5e4
+        sequence_length: 5e6
 
 Usage in Configuration Files
 ----------------------------
 
 Simulators are specified in the workflow configuration YAML files:
 
-.. code-block:: yaml
+   .. code-block:: yaml
 
-   simulator:
-     class_name: YRI_CEU  # Name of the simulator class
-     parameters:          # Override default parameters
-       sequence_length: 5e6
-       samples:
-         YRI: 20
-         CEU: 20
+      simulator:
+        class_name: YRI_CEU  # Name of the simulator class
+        sequence_length: 5e6
+        samples:
+          YRI: 20
+          CEU: 20
 
-The ``class_name`` must match one of the available simulator classes. Parameters specified in the configuration will override the defaults.
+   The ``class_name`` must match one of the available simulator classes. All other keys under ``simulator`` must correspond to attributes listed in the simulator's ``default_config``; values provided here override those defaults. Supplying unused keys will raise an error during configuration parsing.
 
 Creating Custom Simulators
 --------------------------
