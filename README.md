@@ -1,11 +1,11 @@
-# Snakemake workflow: `popgensbi`
+# Snakemake workflow: `popgen-npe`
 
 [![Snakemake](https://img.shields.io/badge/snakemake-≥6.3.0-brightgreen.svg)](https://snakemake.github.io)
 [![Read the Docs](https://img.shields.io/readthedocs/pip/stable.svg)](https://popgensbi-snakemake.readthedocs.io/en/latest/)
 
 
 
-A Snakemake workflow for simulation-based inference in population genetics.
+A Snakemake workflow for neural posterior estimation in population genetics.
 
 
 ## Contents
