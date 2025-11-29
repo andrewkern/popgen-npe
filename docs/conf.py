@@ -27,6 +27,28 @@ extensions = [
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
+# Several workflow modules depend on scientific packages that may not be
+# available in the documentation environment. Mock them so autodoc still
+# renders API references.
+autodoc_mock_imports = [
+    "tskit",
+    "msprime",
+    "demes",
+    "torch",
+    "numpy",
+    "stdpopsim",
+    "sbi",
+    "dinf",
+    "dinf.misc",
+    "allel",
+    "pandas",
+    "tsinfer",
+    "matplotlib",
+    "seaborn",
+    "lightning",
+    "zarr",
+]
+
 # HTML output options
 html_theme = "sphinx_rtd_theme"
 
