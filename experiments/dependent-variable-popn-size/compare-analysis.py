@@ -51,7 +51,7 @@ Examples:
         "--configs",
         nargs="+",
         required=True,
-        help="Paths to popgensbi config files for models to compare",
+        help="Paths to popgen-npe config files for models to compare",
     )
     parser.add_argument(
         "--output", required=True, help="Output directory for comparison results"

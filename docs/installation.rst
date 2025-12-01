@@ -33,6 +33,6 @@ To install popgen-npe, follow these steps:
 
    .. code-block:: bash
 
-       conda activate popgen-npe_env
+       conda activate popgen_npe_env
 
 Now you are ready to use popgen-npe for your simulation-based inference tasks in population genetics!

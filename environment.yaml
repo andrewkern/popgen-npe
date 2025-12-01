@@ -1,4 +1,4 @@
-name: popgen-npe_env
+name: popgen_npe_env
 channels:
   - pytorch
   - nvidia
